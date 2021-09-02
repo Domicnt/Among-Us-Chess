@@ -1,16 +1,8 @@
 {
-    "name": "websocket",
-    "description": "Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.",
-    "keywords": [
-        "websocket",
-        "websockets",
-        "socket",
-        "networking",
-        "comet",
-        "push",
-        "RFC-6455",
-        "realtime",
-        "server",
-        "client"
-    ]
+    "name": "among-us-chess",
+    "description": "chess, but amogus",
+    "version": "1.0.0",
+    "engines": {
+        "node": "14.x"
+    }
 }
