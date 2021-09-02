@@ -1,0 +1,10 @@
+* {
+    margin: auto;
+    background-color: #333;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    margin: auto;
+}
