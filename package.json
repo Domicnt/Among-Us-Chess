@@ -1,8 +1,13 @@
 {
+    "requires": true,
+    "lockfileVersion": 1,
     "name": "among-us-chess",
     "description": "chess, but amogus",
     "version": "1.0.0",
     "engines": {
         "node": "14.x"
+    },
+    "dependencies": {
+        "websocket": "^1.0.34"
     }
 }
