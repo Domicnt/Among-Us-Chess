@@ -31,8 +31,7 @@ ws.onmessage = (evt) => {
             break;
         default:
             //update board
-            let board = JSON.parse(evt.data);
-            setTimeout(function() { draw(board) }, 50);
+            updateBoard(JSON.parse(evt.data));
             break;
     }
 };

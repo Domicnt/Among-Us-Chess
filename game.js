@@ -56,6 +56,7 @@ module.exports = {
         //console.log(startPos);
         //console.log(endPos);
         let temp = board[startPos[0]][startPos[1]];
+        board[startPos[0]][startPos[1]] = 0;
         board[endPos[0]][endPos[1]] = temp;
         return board;
     }

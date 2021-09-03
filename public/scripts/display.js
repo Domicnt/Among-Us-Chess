@@ -29,13 +29,19 @@ king1.src = "./public/assets/king1.png";
 let king2 = new Image();
 king2.src = "./public/assets/king2.png";
 
+//local board variable
+let board = [];
+
+function updateBoard(newBoard) {
+    board = newBoard;
+}
+
 //draw the board
-function draw(board) {
+function draw() {
     //clear screen
     context.fillStyle = "#FFFFFF";
     context.fillRect(0, 0, size, size);
 
-    let counter = 0;
     //draw squares
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
@@ -88,3 +94,5 @@ function draw(board) {
         }
     }
 }
+
+setInterval(draw, 50);
