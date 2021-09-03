@@ -55,8 +55,8 @@ module.exports = {
         endPos = [parseInt(positions[2], 10), parseInt(positions[3], 10)];
         //console.log(startPos);
         //console.log(endPos);
-        board[startPos[0]][startPos[1]] = 0;
-        board[endPos[0]][endPos[1]] = board[startPos[0]][startPos[1]];
+        let temp = board[startPos[0]][startPos[1]] = 0;
+        board[endPos[0]][endPos[1]] = temp;
         return board;
     }
 }
