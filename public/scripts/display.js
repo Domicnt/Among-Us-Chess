@@ -55,40 +55,40 @@ function draw() {
         for (let j = 0; j < 8; j++) {
             switch (board[i][j]) {
                 case 1:
-                    context.drawImage(pawn1, i * size / 8, j * size / 8, size / 8, size / 8);
-                    break;
-                case 11:
                     context.drawImage(pawn2, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 2:
-                    context.drawImage(knight1, i * size / 8, j * size / 8, size / 8, size / 8);
+                case 11:
+                    context.drawImage(pawn1, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 12:
+                case 2:
                     context.drawImage(knight2, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 3:
-                    context.drawImage(bishop1, i * size / 8, j * size / 8, size / 8, size / 8);
+                case 12:
+                    context.drawImage(knight1, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 13:
+                case 3:
                     context.drawImage(bishop2, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 4:
-                    context.drawImage(rook1, i * size / 8, j * size / 8, size / 8, size / 8);
+                case 13:
+                    context.drawImage(bishop1, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 14:
+                case 4:
                     context.drawImage(rook2, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 5:
-                    context.drawImage(queen1, i * size / 8, j * size / 8, size / 8, size / 8);
+                case 14:
+                    context.drawImage(rook1, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
-                case 15:
+                case 5:
                     context.drawImage(queen2, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
+                case 15:
+                    context.drawImage(queen1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    break;
                 case 6:
-                    context.drawImage(king1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(king2, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
                 case 16:
-                    context.drawImage(king2, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(king1, i * size / 8, j * size / 8, size / 8, size / 8);
                     break;
             }
         }

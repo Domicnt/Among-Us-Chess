@@ -45,12 +45,12 @@ let connections = [];
 let connectionIDs = [];
 
 //set up game
-let board = game.reset();
+let pieces = game.reset();
 
 //update clients with changes to the board
 function updateClients() {
     for (let i = 0; i < connections.length; i++) {
-        connections[i].sendUTF(JSON.stringify(board));
+        connections[i].sendUTF(JSON.stringify(game.piecesToBoard(pieces)));
     }
 }
 
@@ -65,7 +65,7 @@ function parseMessage(message) {
             switch (value) {
                 case 'm':
                     //move a piece
-                    board = game.move(board, message);
+                    board = game.move(pieces, message);
                     updateClients();
                     break;
             }
@@ -94,7 +94,7 @@ wss.on('request', (request) => {
     //send player their player number or position in queue
     connection.sendUTF('n' + connections.length);
     //send current board array
-    connection.sendUTF(JSON.stringify(board));
+    connection.sendUTF(JSON.stringify(game.piecesToBoard(pieces)));
 
     connection.on('message', (message) => {
         if (message.type === 'utf8') {
