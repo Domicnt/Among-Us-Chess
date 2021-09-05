@@ -65,7 +65,7 @@ function parseMessage(message) {
             switch (value) {
                 case 'm':
                     //move a piece
-                    board = game.move(pieces, message);
+                    pieces = game.move(pieces, message);
                     updateClients();
                     break;
             }
