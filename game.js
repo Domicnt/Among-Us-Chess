@@ -126,38 +126,35 @@ class Pawn extends Piece {
     }
 }
 
-class Rook extends Piece {
+class Knight extends Piece {
     constructor(Player = 1, X = 0, Y = 0) {
         super(Player, X, Y);
-        this.boardValue = this.player === 1 ? 4 : 14;
-        this.moved = false;
+        this.boardValue = this.player === 1 ? 2 : 12;
     }
     findLegalMoves(pieces) {
+        let board = piecesToBoard(pieces);
         //array of vectors of legal moves
         let moves = [];
-        let direction = [
-            [-1, 0],
-            [0, -1],
-            [1, 0],
-            [0, 1]
+        let directions = [
+            [-2, -1],
+            [-1, -2],
+            [1, -2],
+            [2, -1],
+            [2, 1],
+            [1, 2],
+            [-1, 2],
+            [-2, 1]
         ];
-        for (let i = 0; i < 4; i++) {
-            let pos = [this.x, this.y];
-            let moving = true;
-            while (moving) {
-                pos[0] += direction[i][0];
-                pos[1] += direction[i][1];
-                if (pos[0] < 0 || pos[1] < 0 || pos[0] > 7 || pos[1] > 7) {
-                    break;
-                }
-                if (pieceFromLocation(pieces, pos[0], pos[1]) == -1) {
-                    moves.push([pos[0] - this.x, pos[1] - this.y]);
-                } else if (!this.sameTeam(pieces[pieceFromLocation(pieces, pos[0], pos[1])])) {
-                    moves.push([pos[0] - this.x, pos[1] - this.y]);
-                    break;
-                } else {
-                    break;
-                }
+        for (let i = 0; i < directions.length; i++) {
+            let x = this.x + directions[i][0];
+            let y = this.y + directions[i][1];
+            if (x < 0 || y < 0 || x > 7 || y > 7) {
+                continue;
+            }
+            if (pieceFromLocation(pieces, x, y) == -1) {
+                moves.push(directions[i]);
+            } else if (!this.sameTeam(pieces[pieceFromLocation(pieces, x, y)])) {
+                moves.push(directions[i]);
             }
         }
         return moves;
@@ -170,9 +167,14 @@ class Rook extends Piece {
                 if (index != -1) {
                     pieces.splice(index, 1);
                 }
+                if (legalMoves[i].length > 2) {
+                    let index = pieceFromLocation(pieces, endPos[0], startPos[1]);
+                    if (index != -1) {
+                        pieces.splice(index, 1);
+                    }
+                }
                 this.x = endPos[0];
                 this.y = endPos[1];
-                this.moved = true;
             }
         }
     }
@@ -223,6 +225,58 @@ class Bishop extends Piece {
                 }
                 this.x = endPos[0];
                 this.y = endPos[1];
+            }
+        }
+    }
+}
+
+class Rook extends Piece {
+    constructor(Player = 1, X = 0, Y = 0) {
+        super(Player, X, Y);
+        this.boardValue = this.player === 1 ? 4 : 14;
+        this.moved = false;
+    }
+    findLegalMoves(pieces) {
+        //array of vectors of legal moves
+        let moves = [];
+        let direction = [
+            [-1, 0],
+            [0, -1],
+            [1, 0],
+            [0, 1]
+        ];
+        for (let i = 0; i < 4; i++) {
+            let pos = [this.x, this.y];
+            let moving = true;
+            while (moving) {
+                pos[0] += direction[i][0];
+                pos[1] += direction[i][1];
+                if (pos[0] < 0 || pos[1] < 0 || pos[0] > 7 || pos[1] > 7) {
+                    break;
+                }
+                if (pieceFromLocation(pieces, pos[0], pos[1]) == -1) {
+                    moves.push([pos[0] - this.x, pos[1] - this.y]);
+                } else if (!this.sameTeam(pieces[pieceFromLocation(pieces, pos[0], pos[1])])) {
+                    moves.push([pos[0] - this.x, pos[1] - this.y]);
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        return moves;
+    }
+    move(pieces, startPos, endPos) {
+        let legalMoves = this.findLegalMoves(pieces);
+        for (let i = 0; i < legalMoves.length; i++) {
+            if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
+                let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
+                if (index != -1) {
+                    pieces.splice(index, 1);
+                }
+                this.x = endPos[0];
+                this.y = endPos[1];
+                this.moved = true;
             }
         }
     }
@@ -282,6 +336,63 @@ class Queen extends Piece {
     }
 }
 
+class King extends Piece {
+    constructor(Player = 1, X = 0, Y = 0) {
+        super(Player, X, Y);
+        this.boardValue = this.player === 1 ? 6 : 16;
+        this.moved = false;
+    }
+    findLegalMoves(pieces) {
+        let board = piecesToBoard(pieces);
+        //array of vectors of legal moves
+        let moves = [];
+        let directions = [
+            [-1, -1],
+            [0, -1],
+            [1, -1],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [-1, 1],
+            [-1, 0]
+        ];
+        for (let i = 0; i < directions.length; i++) {
+            let x = this.x + directions[i][0];
+            let y = this.y + directions[i][1];
+            if (x < 0 || y < 0 || x > 7 || y > 7) {
+                continue;
+            }
+            if (pieceFromLocation(pieces, x, y) == -1) {
+                moves.push(directions[i]);
+            } else if (!this.sameTeam(pieces[pieceFromLocation(pieces, x, y)])) {
+                moves.push(directions[i]);
+            }
+        }
+        return moves;
+    }
+    move(pieces, startPos, endPos) {
+        let legalMoves = this.findLegalMoves(pieces);
+        for (let i = 0; i < legalMoves.length; i++) {
+            if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
+                console.log("move");
+                let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
+                if (index != -1) {
+                    pieces.splice(index, 1);
+                }
+                if (legalMoves[i].length > 2) {
+                    let index = pieceFromLocation(pieces, endPos[0], startPos[1]);
+                    if (index != -1) {
+                        pieces.splice(index, 1);
+                    }
+                }
+                this.x = endPos[0];
+                this.y = endPos[1];
+                this.moved = true;
+            }
+        }
+    }
+}
+
 
 module.exports = {
     //reset board
@@ -291,8 +402,28 @@ module.exports = {
             for (let j = 0; j < 8; j++) {
                 if (j === 1 || j === 6)
                     pieces.push(new Pawn(j === 6 ? 1 : 2, i, j));
-                if (j === 0 || j === 7)
-                    pieces.push(new Queen(j === 7 ? 1 : 2, i, j));
+                if (j === 0 || j === 7) {
+                    switch (i) {
+                        case 0:
+                        case 7:
+                            pieces.push(new Rook(j === 7 ? 1 : 2, i, j));
+                            break;
+                        case 1:
+                        case 6:
+                            pieces.push(new Knight(j === 7 ? 1 : 2, i, j));
+                            break;
+                        case 2:
+                        case 5:
+                            pieces.push(new Bishop(j === 7 ? 1 : 2, i, j));
+                            break;
+                        case 3:
+                            pieces.push(new Queen(j === 7 ? 1 : 2, i, j));
+                            break;
+                        case 4:
+                            pieces.push(new King(j === 7 ? 1 : 2, i, j));
+                            break
+                    }
+                }
             }
         }
         return pieces;
