@@ -167,12 +167,6 @@ class Knight extends Piece {
                 if (index != -1) {
                     pieces.splice(index, 1);
                 }
-                if (legalMoves[i].length > 2) {
-                    let index = pieceFromLocation(pieces, endPos[0], startPos[1]);
-                    if (index != -1) {
-                        pieces.splice(index, 1);
-                    }
-                }
                 this.x = endPos[0];
                 this.y = endPos[1];
             }
@@ -368,22 +362,44 @@ class King extends Piece {
                 moves.push(directions[i]);
             }
         }
+        if (!this.moved) {
+            let rook1 = pieceFromLocation(pieces, 0, this.y);
+            let rook2 = pieceFromLocation(pieces, 7, this.y);
+            let move1 = true;
+            let move2 = true;
+            if (pieces[rook1].boardValue % 10 == 4) {
+                for (let i = 1; i < 4; i++) {
+                    if (pieceFromLocation(pieces, i, this.y) != -1) {
+                        move1 = false;
+                    }
+                }
+            }
+            if (pieces[rook2].boardValue % 10 == 4) {
+                for (let i = 5; i < 7; i++) {
+                    if (pieceFromLocation(pieces, i, this.y) != -1) {
+                        move2 = false;
+                    }
+                }
+            }
+            if (move1)
+                moves.push([-2, 0]);
+            if (move2)
+                moves.push([2, 0]);
+        }
         return moves;
     }
     move(pieces, startPos, endPos) {
         let legalMoves = this.findLegalMoves(pieces);
         for (let i = 0; i < legalMoves.length; i++) {
             if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
-                console.log("move");
                 let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
                 if (index != -1) {
                     pieces.splice(index, 1);
                 }
-                if (legalMoves[i].length > 2) {
-                    let index = pieceFromLocation(pieces, endPos[0], startPos[1]);
-                    if (index != -1) {
-                        pieces.splice(index, 1);
-                    }
+                if (legalMoves[i][0] == 2) {
+                    pieces[pieceFromLocation(pieces, 7, this.y)].x = 5;
+                } else if (legalMoves[i][0] == -2) {
+                    pieces[pieceFromLocation(pieces, 0, this.y)].x = 3;
                 }
                 this.x = endPos[0];
                 this.y = endPos[1];
