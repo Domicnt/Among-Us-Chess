@@ -66,7 +66,7 @@ class Pawn extends Piece {
         if (board[this.x][this.y - (1 * direction)] === 0) {
             moves.push([0, -1 * direction]);
         }
-        if (board[this.x][this.y - (2 * direction)] === 0 && !this.moved) {
+        if (board[this.x][this.y - (1 * direction)] === 0 && board[this.x][this.y - (2 * direction)] === 0 && !this.moved) {
             moves.push([0, -2 * direction]);
         }
 
