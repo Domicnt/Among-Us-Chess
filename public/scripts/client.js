@@ -6,7 +6,13 @@ canvas.addEventListener('mousedown', function(event) {
 }, false);
 canvas.addEventListener('mouseup', function(event) {
     endPos = [event.clientX - rect.left, event.clientY - rect.top];
-    send('m', (startPos[0] / size * 8) + ':' + (startPos[1] / size * 8) + ':' + (endPos[0] / size * 8) + ':' + (endPos[1] / size * 8))
+    if ((startPos[0] / size * 8) == (endPos[0] / size * 8) && (startPos[1] / size * 8) == (endPos[1] / size * 8)) {
+        //select
+        send('s', (startPos[0] / size * 8) + ':' + (startPos[1] / size * 8) + ':' + (endPos[0] / size * 8) + ':' + (endPos[1] / size * 8));
+    } else {
+        //move
+        send('m', (startPos[0] / size * 8) + ':' + (startPos[1] / size * 8) + ':' + (endPos[0] / size * 8) + ':' + (endPos[1] / size * 8));
+    }
 }, false);
 
 
@@ -28,6 +34,10 @@ ws.onmessage = (evt) => {
         case 'n':
             //player number
             num = Number(evt.data.replace('n', ''));
+            break;
+        case 'a':
+            //legal positions to move to
+            legalPositions = evt.data.replace('a', '').split(',');
             break;
         default:
             //update board

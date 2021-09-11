@@ -4,7 +4,6 @@ const fs = require('fs');
 
 const game = require('./game');
 
-
 //create server
 let server = http.createServer((request, response) => {
     if (request.url === "/") {
@@ -46,6 +45,8 @@ let connectionIDs = [];
 
 //set up game
 let pieces = game.reset();
+let selecting = false;
+let selected = [0, 0];
 
 //update clients with changes to the board
 function updateClients() {
@@ -54,7 +55,7 @@ function updateClients() {
     }
 }
 
-function parseMessage(message) {
+function parseMessage(message, connection) {
     let ID = message.substring(0, 10); //ID for client
     let value = message.substring(10, 11); //What value is being passed
     message = message.substring(11); //The message passed
@@ -66,7 +67,22 @@ function parseMessage(message) {
                 case 'm':
                     //move a piece
                     pieces = game.move(pieces, message);
+                    selecting = false;
+                    connection.sendUTF('a');
                     updateClients();
+                    break;
+                case 's':
+                    //select a position
+                    if (selecting) {
+                        game.move(pieces, selected[0] + ":" + selected[1] + ":" + parseInt(message.split(":")[0], 10) + ":" + parseInt(message.split(":")[1], 10));
+                        connection.sendUTF('a');
+                        updateClients();
+                    } else {
+                        selected[0] = parseInt(message.split(":")[0], 10);
+                        selected[1] = parseInt(message.split(":")[1], 10);
+                        connection.sendUTF('a' + game.findLegalPositions(pieces, selected));
+                    }
+                    selecting = !selecting;
                     break;
             }
         }
@@ -98,7 +114,7 @@ wss.on('request', (request) => {
 
     connection.on('message', (message) => {
         if (message.type === 'utf8') {
-            parseMessage(message.utf8Data);
+            parseMessage(message.utf8Data, connection);
         }
     });
 

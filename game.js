@@ -459,4 +459,18 @@ module.exports = {
 
     //pieces to board array 
     piecesToBoard,
+
+    //return an array of legal positions a piece can move to
+    findLegalPositions: function(pieces, position) {
+        let index = pieceFromLocation(pieces, position[0], position[1]);
+        let positions = [];
+        if (index != -1) {
+            positions = pieces[index].findLegalMoves(pieces);
+        }
+        for (let i = 0; i < positions.length; i++) {
+            positions[i][0] += pieces[index].x;
+            positions[i][1] += pieces[index].y;
+        }
+        return positions;
+    },
 }

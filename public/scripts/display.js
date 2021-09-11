@@ -29,8 +29,14 @@ king1.src = "./public/assets/king1.png";
 let king2 = new Image();
 king2.src = "./public/assets/king2.png";
 
+let move = new Image();
+move.src = "./public/assets/move.png";
+
 //local board variable
 let board = [];
+
+//legal moves for currently selected piece
+let legalPositions = [];
 
 function updateBoard(newBoard) {
     board = newBoard;
@@ -92,6 +98,11 @@ function draw() {
                     break;
             }
         }
+    }
+
+    //draw legal moves
+    for (let i = 0; i < legalPositions.length - 1; i += 2) {
+        context.drawImage(move, legalPositions[i] * size / 8, legalPositions[i + 1] * size / 8, size / 8, size / 8);
     }
 }
 
