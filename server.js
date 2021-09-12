@@ -80,7 +80,12 @@ function parseMessage(message, connection) {
                     } else {
                         selected[0] = parseInt(message.split(":")[0], 10);
                         selected[1] = parseInt(message.split(":")[1], 10);
-                        connection.sendUTF('a' + game.findLegalPositions(pieces, selected));
+                        let arr = game.findLegalPositions(pieces, selected);
+                        if (arr.length > 1) {
+                            connection.sendUTF('a' + arr);
+                        } else {
+                            break;
+                        }
                     }
                     selecting = !selecting;
                     break;

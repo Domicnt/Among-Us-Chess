@@ -2,16 +2,17 @@ let rect = canvas.getBoundingClientRect()
 startPos = [0, 0];
 endPos = [0, 0];
 canvas.addEventListener('mousedown', function(event) {
-    startPos = [event.clientX - rect.left, event.clientY - rect.top];
+    startPos = [parseInt(((event.clientX - rect.left) / size * 8), 10), parseInt(((event.clientY - rect.top) / size * 8), 10)];
 }, false);
 canvas.addEventListener('mouseup', function(event) {
-    endPos = [event.clientX - rect.left, event.clientY - rect.top];
-    if ((startPos[0] / size * 8) == (endPos[0] / size * 8) && (startPos[1] / size * 8) == (endPos[1] / size * 8)) {
+    endPos = [parseInt(((event.clientX - rect.left) / size * 8), 10), parseInt(((event.clientY - rect.top) / size * 8), 10)];
+    console.log(startPos, endPos);
+    if (startPos[0] == endPos[0] && startPos[1] == endPos[1]) {
         //select
-        send('s', (startPos[0] / size * 8) + ':' + (startPos[1] / size * 8) + ':' + (endPos[0] / size * 8) + ':' + (endPos[1] / size * 8));
+        send('s', startPos[0] + ':' + startPos[1] + ':' + endPos[0] + ':' + endPos[1]);
     } else {
         //move
-        send('m', (startPos[0] / size * 8) + ':' + (startPos[1] / size * 8) + ':' + (endPos[0] / size * 8) + ':' + (endPos[1] / size * 8));
+        send('m', startPos[0] + ':' + startPos[1] + ':' + endPos[0] + ':' + endPos[1]);
     }
 }, false);
 
