@@ -1,11 +1,25 @@
 let rect = canvas.getBoundingClientRect();
+
+let solo = false;
+
+//0 is observer, 1 is white player, 2 is black player
+player = 0;
+
 startPos = [0, 0];
 endPos = [0, 0];
 canvas.addEventListener('mousedown', function(event) {
     startPos = [parseInt(((event.clientX - rect.left) / size * 8), 10), parseInt(((event.clientY - rect.top) / size * 8), 10)];
+    if (player == 2) {
+        startPos[0] = 7 - startPos[0];
+        startPos[1] = 7 - startPos[1];
+    }
 }, false);
 canvas.addEventListener('mouseup', function(event) {
     endPos = [parseInt(((event.clientX - rect.left) / size * 8), 10), parseInt(((event.clientY - rect.top) / size * 8), 10)];
+    if (player == 2) {
+        endPos[0] = 7 - endPos[0];
+        endPos[1] = 7 - endPos[1];
+    }
     console.log(startPos, endPos);
     if (startPos[0] == endPos[0] && startPos[1] == endPos[1]) {
         //select
@@ -15,11 +29,6 @@ canvas.addEventListener('mouseup', function(event) {
         send('m', startPos[0] + ':' + startPos[1] + ':' + endPos[0] + ':' + endPos[1]);
     }
 }, false);
-
-let solo = false;
-
-//0 is observer, 1 is white player, 2 is black player
-let player = 0;
 
 let HOST = window.origin.replace(/^http/, 'ws')
 let ws = new WebSocket(HOST);

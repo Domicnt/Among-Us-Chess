@@ -4,6 +4,8 @@ let size = Math.min(window.innerWidth, window.innerHeight);
 canvas.width = size;
 canvas.height = size;
 
+let player = 0;
+
 let wait = new Image();
 wait.src = "./public/assets/wait.png";
 
@@ -54,7 +56,11 @@ function draw() {
     //draw squares
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            context.fillStyle = (i + j) % 2 == 0 ? "#E6BEF0" : "#909090";
+            if (player != 2) {
+                context.fillStyle = (i + j) % 2 == 0 ? "#E6BEF0" : "#909090";
+            } else {
+                context.fillStyle = (i + j) % 2 == 0 ? "#909090" : "#E6BEF0";
+            }
             context.fillRect(i * size / 8, j * size / 8, size / 8, size / 8);
         }
     }
@@ -62,42 +68,44 @@ function draw() {
     //draw pieces
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
+            let x = player != 2 ? i * size / 8 : size - (i + 1) * size / 8;
+            let y = player != 2 ? j * size / 8 : size - (j + 1) * size / 8;
             switch (board[i][j]) {
                 case 1:
-                    context.drawImage(pawn2, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(pawn2, x, y, size / 8, size / 8);
                     break;
                 case 11:
-                    context.drawImage(pawn1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(pawn1, x, y, size / 8, size / 8);
                     break;
                 case 2:
-                    context.drawImage(knight2, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(knight2, x, y, size / 8, size / 8);
                     break;
                 case 12:
-                    context.drawImage(knight1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(knight1, x, y, size / 8, size / 8);
                     break;
                 case 3:
-                    context.drawImage(bishop2, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(bishop2, x, y, size / 8, size / 8);
                     break;
                 case 13:
-                    context.drawImage(bishop1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(bishop1, x, y, size / 8, size / 8);
                     break;
                 case 4:
-                    context.drawImage(rook2, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(rook2, x, y, size / 8, size / 8);
                     break;
                 case 14:
-                    context.drawImage(rook1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(rook1, x, y, size / 8, size / 8);
                     break;
                 case 5:
-                    context.drawImage(queen2, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(queen2, x, y, size / 8, size / 8);
                     break;
                 case 15:
-                    context.drawImage(queen1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(queen1, x, y, size / 8, size / 8);
                     break;
                 case 6:
-                    context.drawImage(king2, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(king2, x, y, size / 8, size / 8);
                     break;
                 case 16:
-                    context.drawImage(king1, i * size / 8, j * size / 8, size / 8, size / 8);
+                    context.drawImage(king1, x, y, size / 8, size / 8);
                     break;
             }
         }
@@ -105,7 +113,9 @@ function draw() {
 
     //draw legal moves
     for (let i = 0; i < legalPositions.length - 1; i += 2) {
-        context.drawImage(move, legalPositions[i] * size / 8, legalPositions[i + 1] * size / 8, size / 8, size / 8);
+        let x = player != 2 ? legalPositions[i] * size / 8 : size - (legalPositions[i]) * size / 8 - size / 8;
+        let y = player != 2 ? legalPositions[i + 1] * size / 8 : size - (legalPositions[i + 1]) * size / 8 - size / 8;
+        context.drawImage(move, x, y, size / 8, size / 8);
     }
 
     if (solo) {
