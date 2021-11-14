@@ -1,4 +1,4 @@
-let rect = canvas.getBoundingClientRect()
+let rect = canvas.getBoundingClientRect();
 startPos = [0, 0];
 endPos = [0, 0];
 canvas.addEventListener('mousedown', function(event) {
@@ -16,7 +16,10 @@ canvas.addEventListener('mouseup', function(event) {
     }
 }, false);
 
+let solo = false;
 
+//0 is observer, 1 is white player, 2 is black player
+let player = 0;
 
 let HOST = window.origin.replace(/^http/, 'ws')
 let ws = new WebSocket(HOST);
@@ -34,11 +37,19 @@ ws.onmessage = (evt) => {
             break;
         case 'n':
             //player number
-            num = Number(evt.data.replace('n', ''));
+            player = Number(evt.data.replace('n', ''));
             break;
         case 'a':
             //legal positions to move to
             legalPositions = evt.data.replace('a', '').split(',');
+            break;
+        case 'w':
+            //waiting for another player
+            solo = true;
+            break;
+        case 'p':
+            //second player joined
+            solo = false;
             break;
         default:
             //update board

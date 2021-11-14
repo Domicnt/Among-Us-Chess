@@ -45,7 +45,12 @@ let connectionIDs = [];
 
 //set up game
 let pieces = game.reset();
-let selecting = false;
+let moveSuccess = false;
+let Player1ID;
+let Player2ID;
+let whiteTurn = true;
+let Player1selecting = false;
+let Player2selecting = false;
 let selected = [0, 0];
 
 //update clients with changes to the board
@@ -60,37 +65,70 @@ function parseMessage(message, connection) {
     let value = message.substring(10, 11); //What value is being passed
     message = message.substring(11); //The message passed
 
-    for (let i = 0; i < connectionIDs.length; i++) {
-        if (connectionIDs[i] == ID) {
-            //client that sent the message
-            switch (value) {
-                case 'm':
-                    //move a piece
-                    pieces = game.move(pieces, message);
-                    selecting = false;
-                    connection.sendUTF('a');
-                    updateClients();
-                    break;
-                case 's':
-                    //select a position
-                    if (selecting) {
-                        game.move(pieces, selected[0] + ":" + selected[1] + ":" + parseInt(message.split(":")[0], 10) + ":" + parseInt(message.split(":")[1], 10));
-                        connection.sendUTF('a');
-                        updateClients();
-                    } else {
-                        selected[0] = parseInt(message.split(":")[0], 10);
-                        selected[1] = parseInt(message.split(":")[1], 10);
-                        let arr = game.findLegalPositions(pieces, selected);
-                        if (arr.length > 1) {
-                            connection.sendUTF('a' + arr);
-                        } else {
-                            break;
-                        }
-                    }
-                    selecting = !selecting;
-                    break;
-            }
+    if (whiteTurn) {
+        if (ID != Player1ID) {
+            return;
         }
+    } else {
+        if (ID != Player2ID) {
+            return;
+        }
+    }
+
+    let piece = game.pieceFromLocation(pieces, parseInt(message.split(":")[0], 10), parseInt(message.split(":")[1], 10));
+    team = 1;
+    if (piece != -1) {
+        team = pieces[piece].boardValue < 10 ? 1 : 2;
+    }
+    if (Player1selecting) {
+        team = 1;
+    } else if (Player2selecting) {
+        team = 2;
+    }
+
+    if (ID == Player1ID && team == 2) {
+        return;
+    } else if (ID == Player2ID && team == 1) {
+        return;
+    }
+
+    //client that sent the message
+    switch (value) {
+        case 'm':
+            //move a piece
+            moveSuccess = game.move(pieces, message);
+            selecting = false;
+            connection.sendUTF('a');
+            updateClients();
+            break;
+        case 's':
+            //select a position
+            if (Player1selecting || Player2selecting) {
+                moveSuccess = game.move(pieces, selected[0] + ":" + selected[1] + ":" + parseInt(message.split(":")[0], 10) + ":" + parseInt(message.split(":")[1], 10));
+                connection.sendUTF('a');
+                updateClients();
+                Player1selecting = false;
+                Player2selecting = false;
+            } else {
+                selected[0] = parseInt(message.split(":")[0], 10);
+                selected[1] = parseInt(message.split(":")[1], 10);
+                let arr = game.findLegalPositions(pieces, selected);
+                if (arr.length > 0) {
+                    connection.sendUTF('a' + arr);
+                    if (team == 1) {
+                        Player1selecting = true;
+                    } else {
+                        Player2selecting = true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            break;
+    }
+    if (moveSuccess) {
+        whiteTurn = !whiteTurn;
+        moveSuccess = false;
     }
 }
 
@@ -112,8 +150,20 @@ wss.on('request', (request) => {
 
     //send connection their ID
     connection.sendUTF('i' + ID);
-    //send player their player number or position in queue
-    connection.sendUTF('n' + connections.length);
+    //send player their player number
+    if (connections.length == 1) {
+        connection.sendUTF('n' + 1);
+        Player1ID = ID;
+        connection.sendUTF('w');
+    } else if (connections.length == 2) {
+        connection.sendUTF('n' + 2);
+        Player2ID = ID;
+        for (let i = 0; i < connections.length; i++) {
+            connections[i].sendUTF('p');
+        }
+    } else {
+        connection.sendUTF('n' + 0);
+    }
     //send current board array
     connection.sendUTF(JSON.stringify(game.piecesToBoard(pieces)));
 
@@ -127,6 +177,15 @@ wss.on('request', (request) => {
     connection.on('close', (reasonCode, description) => {
         //update player on their player number
         for (let i = 0; i < connections.length; i++) {
+            if (connections[i] == connection) {
+                connections.splice(i, 1);
+                connectionIDs.splice(i, 1);
+                if (connections.length == 1) {
+                    connections[0].sendUTF('w');
+                }
+                i--;
+                continue;
+            }
             connections[i].sendUTF('n' + i + 1);
         }
         console.log('Player' + connection.remoteAddress + ' disconnected at ' + (new Date()));

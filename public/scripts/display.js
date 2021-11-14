@@ -4,6 +4,9 @@ let size = Math.min(window.innerWidth, window.innerHeight);
 canvas.width = size;
 canvas.height = size;
 
+let wait = new Image();
+wait.src = "./public/assets/wait.png";
+
 let pawn1 = new Image();
 pawn1.src = "./public/assets/pawn1.png";
 let pawn2 = new Image();
@@ -103,6 +106,12 @@ function draw() {
     //draw legal moves
     for (let i = 0; i < legalPositions.length - 1; i += 2) {
         context.drawImage(move, legalPositions[i] * size / 8, legalPositions[i + 1] * size / 8, size / 8, size / 8);
+    }
+
+    if (solo) {
+        context.fillStyle = '#000000';
+        context.fillRect(0, size * (3 / 8 - .038), size, size * .076)
+        context.drawImage(wait, size * .25, size * (3 / 8 - .038), size * .5, size * .076);
     }
 }
 

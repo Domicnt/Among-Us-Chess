@@ -101,6 +101,7 @@ class Pawn extends Piece {
     }
     move(pieces, startPos, endPos) {
         let legalMoves = this.findLegalMoves(pieces);
+        let moveSuccess = false;
         for (let i = 0; i < legalMoves.length; i++) {
             if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
                 let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
@@ -116,6 +117,7 @@ class Pawn extends Piece {
                 this.x = endPos[0];
                 this.y = endPos[1];
                 this.moved = true;
+                moveSuccess = true;
                 if (this.enPassantAble) {
                     this.enPassantAble = false;
                 } else if (Math.abs(legalMoves[i][1]) == 2) {
@@ -123,6 +125,7 @@ class Pawn extends Piece {
                 }
             }
         }
+        return moveSuccess;
     }
 }
 
@@ -161,6 +164,7 @@ class Knight extends Piece {
     }
     move(pieces, startPos, endPos) {
         let legalMoves = this.findLegalMoves(pieces);
+        let moveSuccess = false;
         for (let i = 0; i < legalMoves.length; i++) {
             if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
                 let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
@@ -169,8 +173,10 @@ class Knight extends Piece {
                 }
                 this.x = endPos[0];
                 this.y = endPos[1];
+                moveSuccess = true;
             }
         }
+        return moveSuccess;
     }
 }
 
@@ -211,6 +217,7 @@ class Bishop extends Piece {
     }
     move(pieces, startPos, endPos) {
         let legalMoves = this.findLegalMoves(pieces);
+        let moveSuccess = false;
         for (let i = 0; i < legalMoves.length; i++) {
             if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
                 let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
@@ -219,8 +226,10 @@ class Bishop extends Piece {
                 }
                 this.x = endPos[0];
                 this.y = endPos[1];
+                moveSuccess = true;
             }
         }
+        return moveSuccess;
     }
 }
 
@@ -262,6 +271,7 @@ class Rook extends Piece {
     }
     move(pieces, startPos, endPos) {
         let legalMoves = this.findLegalMoves(pieces);
+        let moveSuccess = false;
         for (let i = 0; i < legalMoves.length; i++) {
             if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
                 let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
@@ -271,8 +281,10 @@ class Rook extends Piece {
                 this.x = endPos[0];
                 this.y = endPos[1];
                 this.moved = true;
+                moveSuccess = true;
             }
         }
+        return moveSuccess;
     }
 }
 
@@ -317,6 +329,7 @@ class Queen extends Piece {
     }
     move(pieces, startPos, endPos) {
         let legalMoves = this.findLegalMoves(pieces);
+        let moveSuccess = false;
         for (let i = 0; i < legalMoves.length; i++) {
             if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
                 let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
@@ -325,8 +338,10 @@ class Queen extends Piece {
                 }
                 this.x = endPos[0];
                 this.y = endPos[1];
+                moveSuccess = true;
             }
         }
+        return moveSuccess;
     }
 }
 
@@ -390,6 +405,7 @@ class King extends Piece {
     }
     move(pieces, startPos, endPos) {
         let legalMoves = this.findLegalMoves(pieces);
+        let moveSuccess = false;
         for (let i = 0; i < legalMoves.length; i++) {
             if (legalMoves[i][0] == endPos[0] - startPos[0] && legalMoves[i][1] == endPos[1] - startPos[1]) {
                 let index = pieceFromLocation(pieces, endPos[0], endPos[1]);
@@ -404,8 +420,10 @@ class King extends Piece {
                 this.x = endPos[0];
                 this.y = endPos[1];
                 this.moved = true;
+                moveSuccess = true;
             }
         }
+        return moveSuccess;
     }
 }
 
@@ -452,13 +470,16 @@ module.exports = {
         endPos = [parseInt(positions[2], 10), parseInt(positions[3], 10)];
         let index = pieceFromLocation(pieces, startPos[0], startPos[1]);
         if (index != -1) {
-            pieces[index].move(pieces, startPos, endPos);
+            return pieces[index].move(pieces, startPos, endPos);
         }
-        return pieces;
+        return false;
     },
 
     //pieces to board array 
     piecesToBoard,
+
+    //get piece from location of board
+    pieceFromLocation,
 
     //return an array of legal positions a piece can move to
     findLegalPositions: function(pieces, position) {
