@@ -8,6 +8,8 @@ let player = 0;
 
 let wait = new Image();
 wait.src = "./public/assets/wait.png";
+let select = new Image();
+select.src = "./public/assets/select.png";
 
 let pawn1 = new Image();
 pawn1.src = "./public/assets/pawn1.png";
@@ -36,6 +38,8 @@ king2.src = "./public/assets/king2.png";
 
 let move = new Image();
 move.src = "./public/assets/move.png";
+let crown = new Image();
+crown.src = "./public/assets/crown.png";
 
 //local board variable
 let board = [];
@@ -118,11 +122,24 @@ function draw() {
         context.drawImage(move, x, y, size / 8, size / 8);
     }
 
+    //draw banners
     if (solo) {
         context.fillStyle = '#000000';
-        context.fillRect(0, size * (3 / 8 - .038), size, size * .076)
+        context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
         context.drawImage(wait, size * .25, size * (3 / 8 - .038), size * .5, size * .076);
+    } else if (selecting && !selected) {
+        context.fillStyle = '#000000';
+        context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
+        context.drawImage(select, size * .25, size * (3 / 8 - .038), size * .5, size * .076);
+    } else if (selecting && selected) {
+        context.fillStyle = '#000000';
+        context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
     }
+
+    //draw crown
+    let x = player != 2 ? king[0] * size / 8 : size - (king[0] * size / 8) - size / 8;
+    let y = player != 2 ? king[1] * size / 8 : size - (king[1] * size / 8) - size / 8;
+    context.drawImage(crown, x, y - size / 24, size / 8, size / 8);
 }
 
 setInterval(draw, 50);

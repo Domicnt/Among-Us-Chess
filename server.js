@@ -45,18 +45,53 @@ let connectionIDs = [];
 
 //set up game
 let pieces = game.reset();
-let moveSuccess = false;
+
+let moveSuccess;
 let Player1ID;
 let Player2ID;
-let whiteTurn = true;
-let Player1selecting = false;
-let Player2selecting = false;
+
+let whiteTurn;
+let Player1selecting;
+let Player2selecting;
 let selected = [0, 0];
+
+let selecting;
+let Player1King;
+let Player2King;
+
+//start selecting pieces
+function startPreGame() {
+    pieces = game.reset();
+
+    Player1ID = connectionIDs[0];
+    Player2ID = connectionIDs[1];
+
+    connections[0].sendUTF('s');
+    connections[1].sendUTF('s');
+    selecting = true;
+
+    Player1King = -1;
+    Player2King = -1;
+}
+//start the game
+function startGame() {
+    moveSuccess = false;
+    whiteTurn = true;
+    Player1selecting = false;
+    Player2selecting = false;
+    selected = [0, 0];
+    updateClients();
+}
 
 //update clients with changes to the board
 function updateClients() {
     for (let i = 0; i < connections.length; i++) {
         connections[i].sendUTF(JSON.stringify(game.piecesToBoard(pieces)));
+        if (connectionIDs[i] == Player1ID) {
+            connections[i].sendUTF('k' + Player1King.x + ',' + Player1King.y);
+        } else if (connectionIDs[i] == Player2ID) {
+            connections[i].sendUTF('k' + Player2King.x + ',' + Player2King.y);
+        }
     }
 }
 
@@ -65,13 +100,15 @@ function parseMessage(message, connection) {
     let value = message.substring(10, 11); //What value is being passed
     message = message.substring(11); //The message passed
 
-    if (whiteTurn) {
-        if (ID != Player1ID) {
-            return;
-        }
-    } else {
-        if (ID != Player2ID) {
-            return;
+    if (!selecting) {
+        if (whiteTurn) {
+            if (ID != Player1ID) {
+                return;
+            }
+        } else {
+            if (ID != Player2ID) {
+                return;
+            }
         }
     }
 
@@ -96,14 +133,31 @@ function parseMessage(message, connection) {
     switch (value) {
         case 'm':
             //move a piece
+            if (selecting)
+                break;
             moveSuccess = game.move(pieces, message);
-            selecting = false;
+            Player1selecting = false;
+            Player2selecting = false;
             connection.sendUTF('a');
             updateClients();
             break;
         case 's':
             //select a position
-            if (Player1selecting || Player2selecting) {
+            if (selecting) {
+                if (ID == Player1ID && piece != -1) {
+                    Player1King = pieces[piece];
+                } else if (ID == Player2ID && piece != -1) {
+                    Player2King = pieces[piece];
+                }
+                updateClients();
+                if (Player1King != -1 && Player2King != -1) {
+                    connections[0].sendUTF('s');
+                    connections[1].sendUTF('s');
+                    selecting = false;
+                    startGame();
+                }
+                break
+            } else if (Player1selecting || Player2selecting) {
                 moveSuccess = game.move(pieces, selected[0] + ":" + selected[1] + ":" + parseInt(message.split(":")[0], 10) + ":" + parseInt(message.split(":")[1], 10));
                 connection.sendUTF('a');
                 updateClients();
@@ -153,11 +207,10 @@ wss.on('request', (request) => {
     //send player their player number
     if (connections.length == 1) {
         connection.sendUTF('n' + 1);
-        Player1ID = ID;
         connection.sendUTF('w');
     } else if (connections.length == 2) {
         connection.sendUTF('n' + 2);
-        Player2ID = ID;
+        startPreGame();
         for (let i = 0; i < connections.length; i++) {
             connections[i].sendUTF('p');
         }

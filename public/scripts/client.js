@@ -1,6 +1,9 @@
 let rect = canvas.getBoundingClientRect();
 
 let solo = false;
+let selecting = false;
+let selected = true;
+let king = [-1, -1];
 
 //0 is observer, 1 is white player, 2 is black player
 player = 0;
@@ -23,6 +26,7 @@ canvas.addEventListener('mouseup', function(event) {
     console.log(startPos, endPos);
     if (startPos[0] == endPos[0] && startPos[1] == endPos[1]) {
         //select
+        selected = true;
         send('s', startPos[0] + ':' + startPos[1] + ':' + endPos[0] + ':' + endPos[1]);
     } else {
         //move
@@ -59,6 +63,18 @@ ws.onmessage = (evt) => {
         case 'p':
             //second player joined
             solo = false;
+            break;
+        case 's':
+            //selecting king piece
+            if (selecting) {
+                selecting = false
+            } else {
+                selecting = true;
+                selected = false;
+            }
+        case 'k':
+            //update position of king piece
+            king = evt.data.replace('k', '').split(',');
             break;
         default:
             //update board
