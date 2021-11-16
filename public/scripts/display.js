@@ -10,6 +10,10 @@ let wait = new Image();
 wait.src = "./public/assets/wait.png";
 let select = new Image();
 select.src = "./public/assets/select.png";
+let white = new Image()
+white.src = "./public/assets/white.png";
+let black = new Image()
+black.src = "./public/assets/black.png";
 
 let pawn1 = new Image();
 pawn1.src = "./public/assets/pawn1.png";
@@ -134,6 +138,15 @@ function draw() {
     } else if (selecting && selected) {
         context.fillStyle = '#000000';
         context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
+    }
+    if (whiteWon) {
+        context.fillStyle = '#000000';
+        context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
+        context.drawImage(white, size * .25, size * (3 / 8 - .038), size * .5, size * .076);
+    } else if (blackWon) {
+        context.fillStyle = '#000000';
+        context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
+        context.drawImage(black, size * .25, size * (3 / 8 - .038), size * .5, size * .076);
     }
 
     //draw crown

@@ -5,6 +5,9 @@ let selecting = false;
 let selected = true;
 let king = [-1, -1];
 
+let whiteWon = false;
+let blackWon = false;
+
 //0 is observer, 1 is white player, 2 is black player
 player = 0;
 
@@ -44,6 +47,13 @@ ws.onclose = (evt) => {
 };
 ws.onmessage = (evt) => {
     switch (evt.data[0]) {
+        case 'r':
+            selecting = true;
+            selected = false;
+            king = [-1, -1];
+            whiteWon = false;
+            blackWon = false;
+            break;
         case 'i':
             //ID
             ID = evt.data.replace('i', '');
@@ -75,6 +85,14 @@ ws.onmessage = (evt) => {
         case 'k':
             //update position of king piece
             king = evt.data.replace('k', '').split(',');
+            break;
+        case '1':
+            //player 1 wins
+            whiteWon = true;
+            break;
+        case 2:
+            //player 2 wins
+            blackWon = true;
             break;
         default:
             //update board

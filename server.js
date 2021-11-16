@@ -80,12 +80,25 @@ function startGame() {
     Player1selecting = false;
     Player2selecting = false;
     selected = [0, 0];
-    updateClients();
+    updateClients(0);
+}
+//reset the game
+function reset() {
+    startPreGame();
+    startGame();
+    for (let i = 0; i < connections.length; i++) {
+        connections[i].sendUTF('r');
+    }
 }
 
 //update clients with changes to the board
-function updateClients() {
+function updateClients(winner) {
     for (let i = 0; i < connections.length; i++) {
+        if (winner == 1) {
+            connections[i].sendUTF('1');
+        } else if (winner == 2) {
+            connections[i].sendUTF('2');
+        }
         connections[i].sendUTF(JSON.stringify(game.piecesToBoard(pieces)));
         if (connectionIDs[i] == Player1ID) {
             connections[i].sendUTF('k' + Player1King.x + ',' + Player1King.y);
@@ -139,7 +152,7 @@ function parseMessage(message, connection) {
             Player1selecting = false;
             Player2selecting = false;
             connection.sendUTF('a');
-            updateClients();
+            updateClients(0);
             break;
         case 's':
             //select a position
@@ -149,7 +162,7 @@ function parseMessage(message, connection) {
                 } else if (ID == Player2ID && piece != -1) {
                     Player2King = pieces[piece];
                 }
-                updateClients();
+                updateClients(0);
                 if (Player1King != -1 && Player2King != -1) {
                     connections[0].sendUTF('s');
                     connections[1].sendUTF('s');
@@ -160,7 +173,7 @@ function parseMessage(message, connection) {
             } else if (Player1selecting || Player2selecting) {
                 moveSuccess = game.move(pieces, selected[0] + ":" + selected[1] + ":" + parseInt(message.split(":")[0], 10) + ":" + parseInt(message.split(":")[1], 10));
                 connection.sendUTF('a');
-                updateClients();
+                updateClients(0);
                 Player1selecting = false;
                 Player2selecting = false;
             } else {
@@ -183,6 +196,17 @@ function parseMessage(message, connection) {
     if (moveSuccess) {
         whiteTurn = !whiteTurn;
         moveSuccess = false;
+    }
+
+    //check if a player has won
+    if (Player1King != -1 && Player2King != -1) {
+        if (!pieces.includes(Player1King)) {
+            updateClients(2);
+            setTimeout(() => { reset(); }, 2000);
+        } else if (!pieces.includes(Player2King)) {
+            updateClients(1);
+            setTimeout(() => { reset(); }, 2000);
+        }
     }
 }
 
