@@ -8,12 +8,14 @@ let player = 0;
 
 let wait = new Image();
 wait.src = "./public/assets/wait.png";
+let wait2 = new Image();
+wait2.src = "./public/assets/wait2.png";
 let select = new Image();
 select.src = "./public/assets/select.png";
 let white = new Image()
-white.src = "./public/assets/white.png";
+white.src = "./public/assets/White.png";
 let black = new Image()
-black.src = "./public/assets/black.png";
+black.src = "./public/assets/Black.png";
 
 let pawn1 = new Image();
 pawn1.src = "./public/assets/pawn1.png";
@@ -126,6 +128,11 @@ function draw() {
         context.drawImage(move, x, y, size / 8, size / 8);
     }
 
+    //draw crown
+    let x = player != 2 ? king[0] * size / 8 : size - (king[0] * size / 8) - size / 8;
+    let y = player != 2 ? king[1] * size / 8 : size - (king[1] * size / 8) - size / 8;
+    context.drawImage(crown, x, y - size / 24, size / 8, size / 8);
+
     //draw banners
     if (solo) {
         context.fillStyle = '#000000';
@@ -138,6 +145,7 @@ function draw() {
     } else if (selecting && selected) {
         context.fillStyle = '#000000';
         context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
+        //context.drawImage(wait2, size * .1, size * (3 / 8 - .038), size * .8, size * .076);
     }
     if (whiteWon) {
         context.fillStyle = '#000000';
@@ -148,11 +156,6 @@ function draw() {
         context.fillRect(0, size * (3 / 8 - .038), size, size * .076);
         context.drawImage(black, size * .25, size * (3 / 8 - .038), size * .5, size * .076);
     }
-
-    //draw crown
-    let x = player != 2 ? king[0] * size / 8 : size - (king[0] * size / 8) - size / 8;
-    let y = player != 2 ? king[1] * size / 8 : size - (king[1] * size / 8) - size / 8;
-    context.drawImage(crown, x, y - size / 24, size / 8, size / 8);
 }
 
 setInterval(draw, 50);

@@ -90,7 +90,7 @@ ws.onmessage = (evt) => {
             //player 1 wins
             whiteWon = true;
             break;
-        case 2:
+        case '2':
             //player 2 wins
             blackWon = true;
             break;
